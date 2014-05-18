@@ -181,15 +181,23 @@ class TrackerDB(object):
             raise UnknownMovement("No movements in database")         
            
         return movements
+    
+    def getMovement(self,movementName):
+        with closing(sqlite3.connect(self.path)) as conn:
+            movements = conn.execute('SELECT * FROM track_movement WHERE movementName=?',(movementName,)).fetchall()
             
-            
+        if not movements:
+            raise UnknownMovement(movementName)
+        
+        return movements
+                        
     def addProgression(self,movementName,difficulty,progressionId,progressionName,progressionDesc):        
         with closing(sqlite3.connect(self.path)) as conn:
             #first lookup movementName to get movementId
             movements = conn.execute('SELECT * FROM track_movement WHERE movementName=?',(movementName,)).fetchall()
             
             if not movements:
-                raise UnknownMovement('Movement Name, ' + movementName + ', was not found')
+                raise UnknownMovement('addProgression: Movement Name, ' + movementName + ', was not found')
             
             movementId = (lambda t: t[0])(movements[0])
             
@@ -197,7 +205,24 @@ class TrackerDB(object):
             conn.execute('INSERT INTO track_progression VALUES(?,?,?,?,?)',progression)
             conn.commit()
                  
+    def getProgressions(self):
+        with closing(sqlite3.connect(self.path)) as conn:
+            progressions = conn.execute('SELECT * FROM track_progression').fetchall()
+            
+        if not progressions:
+            raise UnknownProgression("Progression Table is empty")
+        
+        return progressions
+        
+    def getProgression(self,progressionName):
+        with closing(sqlite3.connect(self.path)) as conn:
+            progressions = conn.execute('SELECT * FROM track_progression WHERE progressionName=?',(progressionName,)).fetchall()
    
+        if not progressions:
+            raise UnknownProgression(progressionName)
+        
+        return progressions
+    
     def addWorkout(self):
         pass
         
