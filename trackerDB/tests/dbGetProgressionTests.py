@@ -63,7 +63,7 @@ class Test(unittest.TestCase):
     def testGetProgressionPass(self):
         try:
             self.trackerDB.getProgression('Uneven Pushups')
-        except database.UnknownProgession:
+        except database.UnknownProgression:
             self.fail('Unable to locate movement, Uneven Pushups')
  
         
