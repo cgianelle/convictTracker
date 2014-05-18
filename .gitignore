@@ -1,0 +1,5 @@
+.project
+.pydevproject
+
+trackerDB/*.pyc
+trackerDB/tests/*.pyc
