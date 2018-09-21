@@ -223,8 +223,30 @@ class TrackerDB(object):
         
         return progressions
     
-    def addWorkout(self):
-        pass
+    def addWorkout(self,date,notes):
+        workout = date,notes
+        with closing(sqlite3.connect(self.path)) as conn:
+            conn.execute('INSERT INTO track_workout VALUES(NULL,?,?)',workout)
+            conn.commit()
+            
+    def getWorkouts(self):
+        with closing(sqlite3.connect(self.path)) as conn:
+            workouts = conn.execute('SELECT * FROM track_workout').fetchall()
+            
+        if not workouts:
+            raise UnknownWorkout('Workouts table is empty')
+        
+        return workouts
+    
+    def getWorkout(self,date):
+        with closing(sqlite3.connect(self.path)) as conn:
+            dates = conn.execute('SELECT * FROM track_workout WHERE workoutDate=?',(date,)).fetchall()
+   
+        if not dates:
+            raise UnknownWorkout(date)
+        
+        return dates
+               
         
     
     def addExercise(self):
